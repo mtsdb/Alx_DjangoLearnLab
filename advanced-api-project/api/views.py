@@ -8,6 +8,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import filters as drf_filters
+from django_filters import rest_framework
 from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Book
