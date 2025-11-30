@@ -44,7 +44,8 @@ class BookAPITestCase(APITestCase):
     def test_create_book_authenticated(self):
         url = "/api/books/create/"
         data = {"title": "Delta", "publication_year": 2021, "author": self.author1.pk}
-        self.client.force_authenticate(user=self.user)
+        # Use session login to authenticate the test client
+        self.client.login(username="tester", password="pass1234")
         response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Book.objects.filter(title="Delta").count(), 1)
@@ -52,7 +53,8 @@ class BookAPITestCase(APITestCase):
     def test_update_book_with_pk_authenticated(self):
         url = f"/api/books/{self.book2.pk}/update/"
         data = {"title": "Beta Updated"}
-        self.client.force_authenticate(user=self.user)
+        # Use session login to authenticate the test client
+        self.client.login(username="tester", password="pass1234")
         response = self.client.patch(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.book2.refresh_from_db()
@@ -62,7 +64,8 @@ class BookAPITestCase(APITestCase):
         # create a temporary book to delete
         b = Book.objects.create(title="ToDelete", publication_year=1999, author=self.author1)
         url = f"/api/books/{b.pk}/delete/"
-        self.client.force_authenticate(user=self.user)
+        # Use session login to authenticate the test client
+        self.client.login(username="tester", password="pass1234")
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Book.objects.filter(pk=b.pk).exists())
@@ -70,7 +73,8 @@ class BookAPITestCase(APITestCase):
     def test_update_no_pk_endpoint(self):
         url = "/api/books/update"
         data = {"id": self.book1.pk, "title": "Alpha Updated"}
-        self.client.force_authenticate(user=self.user)
+        # Use session login to authenticate the test client
+        self.client.login(username="tester", password="pass1234")
         response = self.client.patch(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.book1.refresh_from_db()
@@ -80,7 +84,8 @@ class BookAPITestCase(APITestCase):
         b = Book.objects.create(title="ToDelete2", publication_year=2001, author=self.author2)
         url = "/api/books/delete"
         data = {"id": b.pk}
-        self.client.force_authenticate(user=self.user)
+        # Use session login to authenticate the test client
+        self.client.login(username="tester", password="pass1234")
         response = self.client.delete(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Book.objects.filter(pk=b.pk).exists())
