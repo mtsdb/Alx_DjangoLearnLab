@@ -7,6 +7,8 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticate
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import filters as drf_filters
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Book
 from .serializers import BookSerializer
@@ -18,16 +20,17 @@ class BookListView(generics.ListAPIView):
 	serializer_class = BookSerializer
 	permission_classes = [IsAuthenticatedOrReadOnly]
 
+	filter_backends = [DjangoFilterBackend, drf_filters.SearchFilter, drf_filters.OrderingFilter]
+
+	filterset_fields = ["title", "author", "publication_year"]
+
+	search_fields = ["title", "author__name"]
+
+	ordering_fields = ["title", "publication_year"]
+	ordering = ["title"]
+
 	def get_queryset(self):
-		qs = super().get_queryset()
-		year = self.request.query_params.get("year")
-		if year:
-			try:
-				year_int = int(year)
-				qs = qs.filter(publication_year=year_int)
-			except (TypeError, ValueError):
-				pass
-		return qs
+		return super().get_queryset()
 
 
 class BookDetailView(generics.RetrieveAPIView):
