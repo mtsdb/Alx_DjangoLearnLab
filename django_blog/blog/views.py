@@ -8,7 +8,8 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from .models import Post
-from .forms import CustomUserCreationForm, ProfileForm, PostForm
+from .models import Post, Comment
+from .forms import CustomUserCreationForm, ProfileForm, PostForm, CommentForm
 
 
 def home(request):
@@ -54,6 +55,13 @@ class PostDetailView(DetailView):
 	model = Post
 	template_name = "blog/post_detail.html"
 
+	def get_context_data(self, **kwargs):
+		ctx = super().get_context_data(**kwargs)
+		post = self.get_object()
+		ctx["comments"] = post.comments.all()
+		ctx["comment_form"] = CommentForm()
+		return ctx
+
 
 class PostCreateView(LoginRequiredMixin, CreateView):
 	model = Post
@@ -83,3 +91,43 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 	def test_func(self):
 		post = self.get_object()
 		return self.request.user == post.author
+
+
+class CommentCreateView(LoginRequiredMixin, CreateView):
+	model = Comment
+	form_class = CommentForm
+
+	def form_valid(self, form):
+		post_pk = self.kwargs.get("post_pk")
+		post = get_object_or_404(Post, pk=post_pk)
+		form.instance.author = self.request.user
+		form.instance.post = post
+		return super().form_valid(form)
+
+	def get_success_url(self):
+		return self.object.post.get_absolute_url() if hasattr(self.object.post, "get_absolute_url") else reverse_lazy("blog:post_detail", args=[self.object.post.pk])
+
+
+class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+	model = Comment
+	form_class = CommentForm
+	template_name = "blog/comment_form.html"
+
+	def test_func(self):
+		comment = self.get_object()
+		return self.request.user == comment.author
+
+	def get_success_url(self):
+		return reverse_lazy("blog:post_detail", args=[self.object.post.pk])
+
+
+class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+	model = Comment
+	template_name = "blog/comment_confirm_delete.html"
+
+	def test_func(self):
+		comment = self.get_object()
+		return self.request.user == comment.author
+
+	def get_success_url(self):
+		return reverse_lazy("blog:post_detail", args=[self.object.post.pk])
