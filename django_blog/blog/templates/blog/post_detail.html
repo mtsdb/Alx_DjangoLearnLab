@@ -48,5 +48,9 @@
     {% endif %}
 </section>
 
+{% if object.tags.all %}
+    <p>Tags: {% for tag in object.tags.all %}<a href="{% url 'blog:posts_by_tag' tag.name %}">{{ tag.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+{% endif %}
+
 <p><a href="{% url 'blog:posts' %}">Back to posts</a></p>
 {% endblock %}

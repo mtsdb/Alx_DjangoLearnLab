@@ -28,3 +28,15 @@ class Comment(models.Model):
 
 	def __str__(self):
 		return f"Comment by {self.author.username} on {self.post.title}"
+
+
+class Tag(models.Model):
+	name = models.CharField(max_length=50, unique=True)
+
+	def __str__(self):
+		return self.name
+
+
+# Add tags M2M to Post
+if not hasattr(Post, 'tags'):
+	Post.add_to_class('tags', models.ManyToManyField(Tag, blank=True, related_name='posts'))

@@ -7,6 +7,10 @@
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
+    <p>
+        <label for="id_tags">Tags (comma-separated)</label>
+        {{ form.tags }}
+    </p>
     <button type="submit">Save</button>
     <a href="{% url 'blog:posts' %}">Cancel</a>
 </form>

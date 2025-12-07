@@ -51,6 +51,24 @@ class PostListView(ListView):
 	ordering = ["-published_date"]
 
 
+def posts_by_tag(request, tag_name):
+	from .models import Tag
+	tag = Tag.objects.filter(name=tag_name).first()
+	posts = tag.posts.all().order_by('-published_date') if tag else Post.objects.none()
+	return render(request, 'blog/posts_list.html', {'posts': posts, 'tag': tag})
+
+
+def search(request):
+	query = request.GET.get('q', '').strip()
+	posts = Post.objects.none()
+	if query:
+		from django.db.models import Q
+		posts = Post.objects.filter(
+			Q(title__icontains=query) | Q(content__icontains=query) | Q(tags__name__icontains=query)
+		).distinct().order_by('-published_date')
+	return render(request, 'blog/search_results.html', {'posts': posts, 'query': query})
+
+
 class PostDetailView(DetailView):
 	model = Post
 	template_name = "blog/post_detail.html"
