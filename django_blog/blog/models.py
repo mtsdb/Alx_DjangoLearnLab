@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from taggit.managers import TaggableManager
 
 
 class Post(models.Model):
@@ -11,6 +12,7 @@ class Post(models.Model):
 		on_delete=models.CASCADE,
 		related_name="posts",
 	)
+	tags = TaggableManager(blank=True, related_name='posts')
 
 	def __str__(self):
 		return self.title
@@ -30,13 +32,4 @@ class Comment(models.Model):
 		return f"Comment by {self.author.username} on {self.post.title}"
 
 
-class Tag(models.Model):
-	name = models.CharField(max_length=50, unique=True)
 
-	def __str__(self):
-		return self.name
-
-
-# Add tags M2M to Post
-if not hasattr(Post, 'tags'):
-	Post.add_to_class('tags', models.ManyToManyField(Tag, blank=True, related_name='posts'))
