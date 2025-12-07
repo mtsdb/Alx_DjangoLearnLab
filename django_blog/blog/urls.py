@@ -16,4 +16,9 @@ urlpatterns = [
     path("posts/<int:pk>/", views.PostDetailView.as_view(), name="post_detail"),
     path("posts/<int:pk>/edit/", views.PostUpdateView.as_view(), name="post_edit"),
     path("posts/<int:pk>/delete/", views.PostDeleteView.as_view(), name="post_delete"),
+    # Alias singular routes (some checks expect these paths)
+    path("post/new/", views.PostCreateView.as_view(), name="post_new"),
+    path("post/<int:pk>/", views.PostDetailView.as_view(), name="post_detail_singular"),
+    path("post/<int:pk>/update/", views.PostUpdateView.as_view(), name="post_update"),
+    path("post/<int:pk>/delete/", views.PostDeleteView.as_view(), name="post_delete_singular"),
 ]
