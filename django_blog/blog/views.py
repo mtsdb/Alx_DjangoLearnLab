@@ -10,6 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Post
 from .models import Post, Comment
 from .forms import CustomUserCreationForm, ProfileForm, PostForm, CommentForm
+from taggit.models import Tag
 
 
 def home(request):
@@ -52,10 +53,27 @@ class PostListView(ListView):
 
 
 def posts_by_tag(request, tag_name):
-	from .models import Tag
 	tag = Tag.objects.filter(name=tag_name).first()
 	posts = tag.posts.all().order_by('-published_date') if tag else Post.objects.none()
 	return render(request, 'blog/posts_list.html', {'posts': posts, 'tag': tag})
+
+
+class PostByTagListView(ListView):
+	model = Post
+	template_name = "blog/posts_list.html"
+	context_object_name = "posts"
+
+	def get_queryset(self):
+		tag_slug = self.kwargs.get('tag_slug')
+		if tag_slug:
+			return Post.objects.filter(tags__slug=tag_slug).order_by('-published_date')
+		return Post.objects.none()
+
+	def get_context_data(self, **kwargs):
+		ctx = super().get_context_data(**kwargs)
+		tag_slug = self.kwargs.get('tag_slug')
+		ctx['tag'] = Tag.objects.filter(slug=tag_slug).first() if tag_slug else None
+		return ctx
 
 
 def search(request):
