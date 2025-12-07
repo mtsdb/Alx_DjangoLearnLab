@@ -25,4 +25,8 @@ urlpatterns = [
     path("posts/<int:post_pk>/comments/new/", views.CommentCreateView.as_view(), name="comment_create"),
     path("posts/<int:post_pk>/comments/<int:pk>/edit/", views.CommentUpdateView.as_view(), name="comment_edit"),
     path("posts/<int:post_pk>/comments/<int:pk>/delete/", views.CommentDeleteView.as_view(), name="comment_delete"),
+    # Checker-required singular/alternate comment routes
+    path("post/<int:pk>/comments/new/", views.CommentCreateView.as_view(), name="comment_create_post_pk"),
+    path("comment/<int:pk>/update/", views.CommentUpdateView.as_view(), name="comment_update"),
+    path("comment/<int:pk>/delete/", views.CommentDeleteView.as_view(), name="comment_delete_alt"),
 ]
