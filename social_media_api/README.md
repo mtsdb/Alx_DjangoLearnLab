@@ -25,7 +25,7 @@ This is a Django REST API for a social media application with user authenticatio
 The custom user model extends Django's AbstractUser with:
 - bio: Text field for user biography
 - profile_picture: Image field for profile picture
-- followers: Many-to-many relationship for following other users
+- following: Many-to-many relationship for users this user follows
 
 ## Authentication
 
@@ -116,12 +116,25 @@ Authorization: Token <token>
 }
 ```
 
-Create a comment:
+### Follow Management
+
+- **POST /api/follow/<int:user_id>/**: Follow a user (authenticated users only)
+- **POST /api/unfollow/<int:user_id>/**: Unfollow a user (authenticated users only)
+
+### Feed
+
+- **GET /api/feed/**: Get posts from followed users (authenticated users only, paginated)
+
+### Example Requests
+
+Follow a user:
 ```json
-POST /api/comments/
+POST /api/follow/2/
 Authorization: Token <token>
-{
-    "post": 1,
-    "content": "This is a comment on the post."
-}
+```
+
+Get feed:
+```json
+GET /api/feed/
+Authorization: Token <token>
 ```
