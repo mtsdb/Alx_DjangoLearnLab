@@ -138,3 +138,26 @@ Get feed:
 GET /api/feed/
 Authorization: Token <token>
 ```
+
+### Likes
+
+- **POST /api/posts/<int:pk>/like/**: Like a post (authenticated users only)
+- **POST /api/posts/<int:pk>/unlike/**: Unlike a post (authenticated users only)
+
+### Notifications
+
+- **GET /api/notifications/**: List user's notifications (authenticated users only, paginated)
+
+### Example Requests
+
+Like a post:
+```json
+POST /api/posts/1/like/
+Authorization: Token <token>
+```
+
+Get notifications:
+```json
+GET /api/notifications/
+Authorization: Token <token>
+```

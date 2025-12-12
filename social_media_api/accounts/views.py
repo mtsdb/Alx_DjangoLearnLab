@@ -1,6 +1,7 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import permissions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from .serializers import UserSerializer, LoginSerializer
@@ -51,6 +52,18 @@ class FollowUserView(generics.GenericAPIView):
             return Response({'error': 'Cannot follow yourself'}, status=status.HTTP_400_BAD_REQUEST)
         
         request.user.following.add(user_to_follow)
+        
+        # Create notification
+        from django.contrib.contenttypes.models import ContentType
+        from notifications.models import Notification
+        Notification.objects.create(
+            recipient=user_to_follow,
+            actor=request.user,
+            verb='started following you',
+            target_content_type=ContentType.objects.get_for_model(CustomUser),
+            target_object_id=user_to_follow.id
+        )
+        
         return Response({'message': f'You are now following {user_to_follow.username}'}, status=status.HTTP_200_OK)
 
 class UnfollowUserView(generics.GenericAPIView):
