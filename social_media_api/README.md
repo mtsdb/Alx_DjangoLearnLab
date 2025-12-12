@@ -24,7 +24,7 @@ This is a Django REST API for a social media application with user authenticatio
 
 The custom user model extends Django's AbstractUser with:
 - bio: Text field for user biography
-- profile_picture: CharField for profile picture URL
+- profile_picture: Image field for profile picture
 - followers: Many-to-many relationship for following other users
 
 ## Authentication
@@ -42,7 +42,7 @@ Body:
     "email": "test@example.com",
     "password": "password123",
     "bio": "Optional bio",
-    "profile_picture": "http://example.com/pic.jpg"
+    "profile_picture": null
 }
 ```
 
