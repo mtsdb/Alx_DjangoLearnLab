@@ -161,3 +161,33 @@ Get notifications:
 GET /api/notifications/
 Authorization: Token <token>
 ```
+
+## Deployment
+
+This application is configured for deployment on Heroku.
+
+### Prerequisites
+- Heroku account
+- PostgreSQL database (Heroku Postgres recommended)
+
+### Deployment Steps
+1. Install Heroku CLI
+2. Login to Heroku: `heroku login`
+3. Create app: `heroku create your-app-name`
+4. Add PostgreSQL: `heroku addons:create heroku-postgresql:hobby-dev`
+5. Set environment variables:
+   - `heroku config:set SECRET_KEY=your-secret-key`
+   - `heroku config:set DEBUG=False`
+   - `heroku config:set ALLOWED_HOSTS=your-app-name.herokuapp.com`
+6. Push to Heroku: `git push heroku main`
+7. Run migrations: `heroku run python manage.py migrate`
+8. Collect static files: `heroku run python manage.py collectstatic --noinput`
+
+### Environment Variables
+- SECRET_KEY: Django secret key
+- DEBUG: False for production
+- ALLOWED_HOSTS: Comma-separated list of allowed hosts
+- DATABASE_URL: Automatically set by Heroku Postgres
+
+### Local Development
+For local development with PostgreSQL, set the database environment variables accordingly.
